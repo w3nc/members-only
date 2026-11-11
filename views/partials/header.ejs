@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | The Back Booth</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">The Back Booth</a>
+  <nav>
+    <% if (currentUser) { %>
+      <span class="who">hi, <%= currentUser.first_name %></span>
+      <a href="/log-out">Log out</a>
+    <% } else { %>
+      <a href="/log-in">Log in</a>
+      <a class="button small" href="/sign-up">Join the club</a>
+    <% } %>
+  </nav>
+</header>

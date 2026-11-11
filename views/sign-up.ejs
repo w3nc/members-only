@@ -1,0 +1,38 @@
+<%- include("partials/header") %>
+<main class="container split">
+  <div>
+    <h1>Get your name on the <span class="accent">list.</span></h1>
+    <p class="lede">Heads up: signing up does not make you a member. That part is earned with a secret word.</p>
+    <p class="note-hand">no spam, promise</p>
+  </div>
+  <form class="card-form" action="/sign-up" method="POST" novalidate>
+    <% if (formError) { %>
+      <p class="form-alert" role="alert"><%= formError %></p>
+    <% } %>
+    <div class="field-grid">
+      <label class="<%= fieldErrors.firstName ? 'has-error' : '' %>">First name
+        <input type="text" name="firstName" value="<%= old.firstName || '' %>" autocomplete="given-name" maxlength="50">
+        <% if (fieldErrors.firstName) { %><span class="field-msg"><%= fieldErrors.firstName.msg %></span><% } %>
+      </label>
+      <label class="<%= fieldErrors.lastName ? 'has-error' : '' %>">Last name
+        <input type="text" name="lastName" value="<%= old.lastName || '' %>" autocomplete="family-name" maxlength="50">
+        <% if (fieldErrors.lastName) { %><span class="field-msg"><%= fieldErrors.lastName.msg %></span><% } %>
+      </label>
+    </div>
+    <label class="<%= fieldErrors.email ? 'has-error' : '' %>">Email
+      <input type="email" name="email" value="<%= old.email || '' %>" autocomplete="email" placeholder="name@example.com">
+      <% if (fieldErrors.email) { %><span class="field-msg"><%= fieldErrors.email.msg %></span><% } %>
+    </label>
+    <label class="<%= fieldErrors.password ? 'has-error' : '' %>">Password
+      <input type="password" name="password" autocomplete="new-password">
+      <span class="field-hint">At least 8 characters, with one letter and one number.</span>
+      <% if (fieldErrors.password) { %><span class="field-msg"><%= fieldErrors.password.msg %></span><% } %>
+    </label>
+    <label class="<%= fieldErrors.confirmPassword ? 'has-error' : '' %>">Confirm password
+      <input type="password" name="confirmPassword" autocomplete="new-password">
+      <% if (fieldErrors.confirmPassword) { %><span class="field-msg"><%= fieldErrors.confirmPassword.msg %></span><% } %>
+    </label>
+    <button type="submit">Sign me up</button>
+  </form>
+</main>
+<%- include("partials/footer") %>

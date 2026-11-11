@@ -1,0 +1,61 @@
+<%- include("partials/header") %>
+<% const isMember = Boolean(currentUser && currentUser.is_member); %>
+<% const isAdmin = Boolean(currentUser && currentUser.is_admin); %>
+<main class="container<%= isMember ? ' wall-layout' : '' %>">
+  <% if (isMember) { %>
+    <aside class="side">
+      <a class="button" href="/new">Pin a new note</a>
+      <% if (isAdmin) { %>
+        <p class="admin-pill">Admin view</p>
+        <p>You see names and dates. As admin you can also tear notes down.</p>
+      <% } else { %>
+        <p>You see names and dates.</p>
+      <% } %>
+    </aside>
+  <% } %>
+
+  <section>
+    <% if (isMember) { %>
+      <h1>The <span class="accent">wall</span></h1>
+    <% } else { %>
+      <div class="heading-row">
+        <h1>Who wrote <span class="accent">this?</span></h1>
+        <% if (currentUser) { %>
+          <a class="button" href="/join">Enter the passcode</a>
+        <% } %>
+      </div>
+      <p class="lede">Anonymous notes, free for anyone to read. Members get the names. Everyone else gets to wonder.</p>
+      <% if (currentUser) { %>
+        <a class="button" href="/new">Write a note</a>
+      <% } else { %>
+        <a class="button" href="/sign-up">Join the club</a>
+      <% } %>
+    <% } %>
+
+    <% if (messages.length === 0) { %>
+      <p class="note-hand">nothing pinned yet.</p>
+    <% } %>
+
+    <% messages.forEach(function(m) { %>
+      <article class="message">
+        <h2><%= m.title %></h2>
+        <p><%= m.text %></p>
+        <div class="note-foot">
+          <% const day = new Date(m.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase(); %>
+          <% if (m.author) { %>
+            <span class="tag"><%= m.author %> · <%= day %></span>
+          <% } else { %>
+            <span class="tag pink">Who? Members know</span>
+          <% } %>
+          <% if (isAdmin) { %>
+            <form action="/messages/<%= m.id %>/delete" method="POST" class="inline">
+              <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+              <button type="submit" class="tear" onclick="return confirm('Tear this note down?');">Tear it down</button>
+            </form>
+          <% } %>
+        </div>
+      </article>
+    <% }); %>
+  </section>
+</main>
+<%- include("partials/footer") %>

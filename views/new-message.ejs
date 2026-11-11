@@ -1,0 +1,23 @@
+<%- include("partials/header") %>
+<main class="container split">
+  <form class="card-form" action="/new" method="POST">
+    <h2 class="card-title">Pin a new note</h2>
+    <% if (errors.length) { %>
+      <ul class="errors">
+        <% errors.forEach(function(e) { %><li><%= e.msg %></li><% }); %>
+      </ul>
+    <% } %>
+    <label>Title <input type="text" name="title" maxlength="200" value="<%= old.title || '' %>" required></label>
+    <label>Your note <textarea name="text" rows="6" maxlength="1000" required><%= old.text || '' %></textarea></label>
+    <button type="submit">Pin it</button>
+  </form>
+  <div class="preview">
+    <article class="message">
+      <h2>Your title shows here</h2>
+      <p>Your words show here, with the date only for members.</p>
+      <div class="note-foot"><span class="tag pink">Who? Members know</span></div>
+    </article>
+    <p class="note-hand">guests will see this, nameless</p>
+  </div>
+</main>
+<%- include("partials/footer") %>

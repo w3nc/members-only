@@ -1,0 +1,16 @@
+<%- include("partials/header") %>
+<main class="container split">
+  <div>
+    <h1>Say the <span class="accent">secret word.</span></h1>
+    <p class="lede">Get the passcode from a member. Say it right and the names appear.</p>
+  </div>
+  <form class="passcode-card" action="/join" method="POST">
+    <label for="passcode">Passcode</label>
+    <input id="passcode" type="password" name="passcode" required>
+    <% if (error) { %><p class="errors"><%= error %></p><% } %>
+    <button type="submit">Stamp me in</button>
+    <p class="stamp">Member</p>
+    <p class="note-hand">this is what you get</p>
+  </form>
+</main>
+<%- include("partials/footer") %>
