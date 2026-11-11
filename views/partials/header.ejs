@@ -11,7 +11,7 @@
 <header class="site-header">
   <a class="brand" href="/">The Back Booth</a>
   <nav>
-    <% if (currentUser) { %>
+    <% if (typeof currentUser !== "undefined" && currentUser) { %>
       <span class="who">hi, <%= currentUser.first_name %></span>
       <a href="/log-out">Log out</a>
     <% } else { %>

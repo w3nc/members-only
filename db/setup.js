@@ -1,12 +1,11 @@
 require("dotenv").config();
-const fs = require("node:fs");
-const path = require("node:path");
+const ensureSchema = require("./ensureSchema");
 const pool = require("./pool");
 
-// Creates the tables from schema.sql. Safe to run more than once.
+// Creates the tables. Run it by hand with: npm run setup
+// The app also runs this on every start, so this is only for a manual check.
 (async () => {
-  const sql = fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8");
-  await pool.query(sql);
+  await ensureSchema();
   console.log("Database tables are ready.");
   await pool.end();
 })().catch((err) => {

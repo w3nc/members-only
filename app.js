@@ -6,12 +6,16 @@ const session = require("express-session");
 const connectPgSimple = require("connect-pg-simple");
 const passport = require("passport");
 const pool = require("./db/pool");
+const ensureSchema = require("./db/ensureSchema");
 require("./config/passport");
 
 const indexRouter = require("./routes/indexRouter");
 const authRouter = require("./routes/authRouter");
 
 const app = express();
+
+// Render puts the app behind its own proxy, so trust it for secure cookies
+app.set("trust proxy", 1);
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -29,7 +33,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      // A live site uses https, so only then require a secure cookie
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24 * 7, // one week
     },
   })
 );
@@ -51,15 +57,28 @@ app.use("/", indexRouter);
 app.use("/", authRouter);
 
 app.use((req, res) => {
-  res.status(404).render("error", { title: "Not found", message: "Page not found." });
+  res.status(404).render("error", { title: "Not found", message: "Page not found.", currentUser: req.user });
 });
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).render("error", { title: "Error", message: "Something went wrong. Please try again." });
+  res.status(500).render("error", { title: "Error", message: "Something went wrong. Please try again.", currentUser: req.user });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Members Only is running on http://localhost:${PORT}`);
-});
+
+// Make sure the tables exist before taking any request.
+// This is what lets the app work on a fresh hosted database.
+ensureSchema()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Members Only is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Could not prepare the database:", err.message);
+    if (err.code === "ECONNREFUSED") {
+      console.error("The database address was refused. Check DATABASE_URL points at your Render Postgres.");
+    }
+    process.exit(1);
+  });

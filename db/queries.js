@@ -1,5 +1,6 @@
 const pool = require("./pool");
 
+// Every database question the app asks is written here, in one place.
 // The $1, $2... marks keep user input separate from the SQL text (this stops SQL injection).
 
 async function createUser({ firstName, lastName, email, passwordHash }) {
